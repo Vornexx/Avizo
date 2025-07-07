@@ -6,17 +6,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import org.vornex.user.dto.internal.UserDto;
 import org.vornex.user.dto.request.UserFilterDto;
 import org.vornex.user.dto.response.PagedResponse;
+import org.vornex.user.entity.Role;
 import org.vornex.user.entity.User;
 import org.vornex.user.filter.UserSpecifications;
 import org.vornex.user.mapper.UserMapper;
+import org.vornex.user.repository.RoleRepository;
 import org.vornex.user.repository.UserRepository;
+import org.vornex.userapi.AccountStatus;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -24,6 +30,7 @@ public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final UserMapper mapper;
     private static final int MAX_PAGE_SIZE = 100;
+    private final RoleRepository roleRepository;
 
     @Override
     public PagedResponse<UserDto> getAllUsers(int page, int size, UserFilterDto filterDto) {
@@ -49,6 +56,61 @@ public class AdminServiceImpl implements AdminService {
                 .totalPages(pageResult.getTotalPages())
                 .build();
 
+    }
+
+    @Override
+    @Transactional(readOnly = true) //оптимизация hibernate чтобы не следил за dirty-checking
+    public UserDto getUserById(UUID id) {
+        User user = userRepository.findByIdWithRolesAndPermissions(id) // чтобы в dto смапился
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return mapper.toUserDto(user);
+    }
+
+    @Override
+    public void changeActive(UUID id, AccountStatus status) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        if (status != null) {
+            user.setStatus(status);
+        }
+    }
+
+    @Override
+    public void updateUserRoles(UUID id, Set<String> roleNames) {
+        User user = userRepository.findByIdWithRolesAndPermissions(id) //
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        List<Role> roles = roleRepository.findByNameIn(roleNames);
+
+        if (roles.size() != roleNames.size()) { // если кол-во запрошенных ролей != кол-во полученных ролей
+            Set<String> found = roles.stream().map(Role::getName).collect(Collectors.toSet());
+            Set<String> missing = new HashSet<>(roleNames); // делаем копию. defensive copy чтобы не мутировать входные данные
+            missing.removeAll(found); // теперь безопасно модифицируем
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Роли не найдены:" + String.join(", ", missing)); // join чтобы не отображалось с квадратными скобками.
+        }
+        user.setRoles(new HashSet<>(roles));
+    }
+
+    @Override
+    @Transactional
+    public void changeAccountStatus(UUID id, AccountStatus newStatus) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        AccountStatus currentStatus = user.getStatus();
+        if (currentStatus == newStatus) { //enum всегда через == сравниваем.
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Статус уже установлен: " + newStatus);
+        }
+
+        if (!currentStatus.canTransitionTo(newStatus)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "переход из " + currentStatus + " в " + newStatus + " не разрешен");
+
+        }
+        user.setStatus(newStatus);
+
+//        log.info("Админ сменил статус пользователя {}: {} → {}", user.getId(), currentStatus, newStatus);
     }
 
     public Specification<User> buildSpecification(UserFilterDto filter) {
