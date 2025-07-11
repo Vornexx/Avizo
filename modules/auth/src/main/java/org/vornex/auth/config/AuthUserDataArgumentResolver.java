@@ -1,7 +1,9 @@
 package org.vornex.auth.config;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -14,7 +16,7 @@ public class AuthUserDataArgumentResolver implements HandlerMethodArgumentResolv
     private final HandlerMethodArgumentResolver delegate;
 
     public AuthUserDataArgumentResolver(HandlerMethodArgumentResolver delegate) {
-        this.delegate = delegate;
+        this.delegate = new AuthenticationPrincipalArgumentResolver();
     }
 
     @Override
@@ -24,9 +26,9 @@ public class AuthUserDataArgumentResolver implements HandlerMethodArgumentResolv
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter,
+    public Object resolveArgument(@NonNull MethodParameter parameter,
                                   ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest,
+                                  @NonNull NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
         Object principal = delegate.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
 

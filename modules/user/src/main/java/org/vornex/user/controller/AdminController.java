@@ -1,6 +1,7 @@
 package org.vornex.user.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class AdminController {
     private final AdminService adminService;
 
+    // возможно стоит возвращать не полное dto, а специальный какой-нибудь.
     @GetMapping()
     public ResponseEntity<PagedResponse<UserDto>> getAllUsers(
             @RequestParam(defaultValue = "0") @Min(0) int page,

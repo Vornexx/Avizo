@@ -26,7 +26,7 @@ public interface UserMapper {
     PublicUserDto toPublicUserDto(User user);
 
 //    //обратный маппинг при необходимости
-//    User toEntity(UserDto userDto); из role string в Role проблема.
+//    User fromDto (UserDto userDto); из role string в Role проблема.
 
     void updateFromDto(UpdateProfileDto updateProfileDto, @MappingTarget User user);
 

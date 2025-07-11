@@ -6,6 +6,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+
 @EnableJpaAuditing
 @SpringBootApplication(scanBasePackages = {
         "org.vornex.app",
@@ -19,6 +23,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class AppApplication {
     public static void main(String[] args) {
         SpringApplication.run(AppApplication.class, args);
+        System.out.println("ZoneId.systemDefault(): " + ZoneId.systemDefault());
+        System.out.println("LocalDateTime.now(): " + LocalDateTime.now());
+        System.out.println("OffsetDateTime.now(): " + OffsetDateTime.now());
     }
 
 }

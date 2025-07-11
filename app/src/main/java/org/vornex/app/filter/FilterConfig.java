@@ -12,9 +12,6 @@ public class FilterConfig {
     public FilterRegistrationBean<MDCFilter> mdcFilter(MDCFilter mdcFilter) {
         FilterRegistrationBean<MDCFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(mdcFilter);
-        // Гарантированно после Security (но не требует прямой зависимости от auth)
-//        registration.setOrder(Ordered.LOWEST_PRECEDENCE - 10);
-
         return registration;
     }
 }

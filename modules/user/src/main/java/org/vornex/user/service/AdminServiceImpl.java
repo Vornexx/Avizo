@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final UserMapper mapper;
-    private static final int MAX_PAGE_SIZE = 100;
     private final RoleRepository roleRepository;
+    private static final int MAX_PAGE_SIZE = 100;
 
     @Override
     public PagedResponse<UserDto> getAllUsers(int page, int size, UserFilterDto filterDto) {
@@ -103,7 +103,7 @@ public class AdminServiceImpl implements AdminService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Статус уже установлен: " + newStatus);
         }
 
-        if (!currentStatus.canTransitionTo(newStatus)){
+        if (!currentStatus.canTransitionTo(newStatus)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "переход из " + currentStatus + " в " + newStatus + " не разрешен");
 
