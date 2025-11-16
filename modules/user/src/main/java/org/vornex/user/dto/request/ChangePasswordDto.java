@@ -2,9 +2,10 @@ package org.vornex.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@NoArgsConstructor
 public class ChangePasswordDto {
 
     @NotBlank

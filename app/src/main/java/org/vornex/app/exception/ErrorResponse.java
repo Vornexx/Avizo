@@ -1,4 +1,4 @@
-package org.vornex.app.Exception;
+package org.vornex.app.exception;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     //id пользователя будет в карточке объявления (listing)
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<PublicUserDto> getPublicUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getPublicUserById(id));
     }
@@ -39,9 +39,9 @@ public class UserController {
     public ResponseEntity<Void> updateMyProfile(@AuthenticationPrincipal AuthUserData userDetails,
                                                 @Valid @RequestBody UpdateProfileDto updateProfileDto) {
         userService.updateMyProfile(userDetails.getId(), updateProfileDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
-    //инвалидировать старые токены, решить вопрос с jwt перед тем как этой хуйней заниматься.
+
     @PatchMapping("/me/password")
     public ResponseEntity<Void> changePassword(@AuthenticationPrincipal AuthUserData userDetails, @Valid @RequestBody ChangePasswordDto passwordDto) {
         userService.changePassword(userDetails.getId(), passwordDto);
@@ -51,25 +51,12 @@ public class UserController {
     @PatchMapping("/me/email")
     public ResponseEntity<Void> changeEmail(@AuthenticationPrincipal AuthUserData userDetails, @Valid @RequestBody ChangeEmailDto emailDto) {
         userService.changeEmail(userDetails.getId(), emailDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
-
-    //Можно добавить валидацию MX-записи email через стороннюю либу.
-    //
-    //Можно отправить подтверждение на новый email (через токен-ссылку).
-    //
-    //Можно логировать смену email'а в audit.log.
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal AuthUserData userDetails) {
         userService.deleteAccount(userDetails.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
-//    // в будущем добавить смену аватара
-
-    // -----------> ИЗБРАННОЕ ОБЪЯВЛЕНИЙ <-----------
-
-
-
-
 }

@@ -3,7 +3,6 @@ package org.vornex.auth.config;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -11,12 +10,15 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import org.vornex.auth.CustomUserDetails;
 import org.vornex.authapi.AuthUserData;
 
+import static java.util.Objects.requireNonNull;
+
+
 public class AuthUserDataArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final HandlerMethodArgumentResolver delegate;
 
     public AuthUserDataArgumentResolver(HandlerMethodArgumentResolver delegate) {
-        this.delegate = new AuthenticationPrincipalArgumentResolver();
+        this.delegate = requireNonNull(delegate, "delegate must not be null");
     }
 
     @Override
@@ -35,7 +37,6 @@ public class AuthUserDataArgumentResolver implements HandlerMethodArgumentResolv
         if (principal instanceof CustomUserDetails customUserDetails) {
             return customUserDetails.getUser(); // возвращаем AuthUserData
         }
-
         return principal;
     }
 }

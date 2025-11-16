@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
     public PublicUserDto getPublicUserById(UUID uuid) {
         User user = userRepository.findById(uuid)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        //TODO если после бана/удаления юзера буду делать удаление всех объявлений пользователя надо будет убрать это
         if (user.getStatus() != AccountStatus.ACTIVE) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account is not active");
         }

@@ -12,10 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.vornex.userapi.AccountStatus;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -64,9 +61,7 @@ public class User {
     @Column(nullable = false)
     LocalDateTime updatedAt;
 
-    @ElementCollection
-    @CollectionTable(name = "user_favorites", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "listing_id", columnDefinition = "uuid") // не забыть сделать fk на listing_id в миграциях
-    List<UUID> favoriteListingIds;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<Favorite> favorites = new ArrayList<>();
 
 }

@@ -18,12 +18,6 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
 
     Optional<User> findByUsername(String username);
 
-//    @EntityGraph(attributePaths = {"roles", "roles.permissions"})
-//    Optional<User> findByUsernameWithRolesAndPermissions(String username);
-//
-//    @EntityGraph(attributePaths = {"roles", "roles.permissions"})
-//    Optional<User> findByIdWithRolesAndPermissions(UUID id);
-
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.roles r LEFT JOIN FETCH r.permissions WHERE u.username = :username")
     Optional<User> findByUsernameWithRolesAndPermissions(@Param("username") String username);
 
@@ -32,9 +26,15 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
 
     @EntityGraph(attributePaths = {"roles"})
     @NonNull
-    Page<User> findAll( Specification<User> spec, @NonNull Pageable pageable);
+    Page<User> findAll(Specification<User> spec, @NonNull Pageable pageable);
 
     boolean existsByEmail(String email);
 
+    boolean existsByUsername(String username);
+
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByPhoneNumber(String phoneNumber);
 
 }

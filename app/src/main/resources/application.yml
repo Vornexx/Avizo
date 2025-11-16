@@ -4,9 +4,33 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: true
+
+
   jpa:
     hibernate:
-      ddl-auto: update # or validate, update, create
+      ddl-auto: validate
     properties:
       hibernate:
         default_schema: public
+        show_sql: true
+        format_sql: true
+
+app:
+  storage:
+    endpoint: https://storage.yandexcloud.net
+    region: ru-central1
+    accessKey: ${STORAGE_ACCESS_KEY}
+    secretKey: ${STORAGE_SECRET_KEY}
+    bucket: my-bucket-name
+    #    cdnDomain: https://cdn.mysite.com   # если есть CDN. Если пусто — будет endpoint/bucket/key
+    pathStyleAccess: true
+    presignTtl: 15m
+
+
+logging:
+  level:
+    org.hibernate: INFO
+    liquibase: INFO

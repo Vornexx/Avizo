@@ -26,7 +26,6 @@ import java.util.UUID;
 public class AdminController {
     private final AdminService adminService;
 
-    // возможно стоит возвращать не полное dto, а специальный какой-нибудь.
     @GetMapping()
     public ResponseEntity<PagedResponse<UserDto>> getAllUsers(
             @RequestParam(defaultValue = "0") @Min(0) int page,

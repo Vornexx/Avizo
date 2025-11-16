@@ -9,15 +9,25 @@ import org.vornex.user.entity.User;
 import org.vornex.user.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.UUID;
+
 @AllArgsConstructor
 @Service
 public class AuthUserDetailsServiceImpl implements AuthDetailsService {
     private final UserRepository userRepository;
 
+
     @Override
     public AuthUserData findByUsername(String username) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameWithRolesAndPermissions(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return new UserDetailsAdapter(user);
+        return UserDetailsAdapter.fromUser(user);
+    }
+
+    @Override
+    public AuthUserData findById(UUID userId) {
+        User user = userRepository.findByIdWithRolesAndPermissions(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return UserDetailsAdapter.fromUser(user);
     }
 }

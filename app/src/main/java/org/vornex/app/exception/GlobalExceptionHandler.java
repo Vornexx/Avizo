@@ -1,5 +1,6 @@
-package org.vornex.app.Exception;
+package org.vornex.app.exception;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
+import org.vornex.exception.UnauthorizedException;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -48,7 +50,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNameNotFound(UsernameNotFoundException ex, HttpServletRequest request) {
-        auditLogger.info("User not found at [{}]: {}", request.getRequestURI(), ex.getMessage(), ex);
+        auditLogger.warn("User not found at [{}]: {}", request.getRequestURI(), ex.getMessage(), ex);
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 buildErrorResponse(HttpStatus.UNAUTHORIZED, "Пользователь не найден", request.getRequestURI(), null)
@@ -86,13 +88,6 @@ public class GlobalExceptionHandler {
                 buildErrorResponse(HttpStatus.BAD_REQUEST, "Ошибка валидации", request.getRequestURI(), errors)
         );
     }
-//    @ExceptionHandler(NoResourceFoundException.class)
-//    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex, HttpServletRequest request) {
-//        log.warn("Resource not found at [{}]: {}", request.getRequestURI(), ex.getMessage(), ex);
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-//                buildErrorResponse(HttpStatus.NOT_FOUND, "Ресурс не найден", request.getRequestURI(), null)
-//        );
-//    }
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex, HttpServletRequest request) {
@@ -110,6 +105,32 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(
                 buildErrorResponse(status, reason, request.getRequestURI(), null)
+        );
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorized(UnauthorizedException ex, HttpServletRequest request) {
+        auditLogger.warn("Unauthorized access at [{}]: {}", request.getRequestURI(), ex.getMessage(), ex);
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                buildErrorResponse(
+                        HttpStatus.UNAUTHORIZED,
+                        ex.getMessage(),
+                        request.getRequestURI(),
+                        null
+                )
+        );
+    }
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwt(ExpiredJwtException ex, HttpServletRequest request) {
+        auditLogger.warn("Expired JWT at [{}]: {}", request.getRequestURI(), ex.getMessage(), ex);
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                buildErrorResponse(
+                        HttpStatus.UNAUTHORIZED,
+                        "Срок действия токена истёк",
+                        request.getRequestURI(),
+                        null
+                )
         );
     }
 

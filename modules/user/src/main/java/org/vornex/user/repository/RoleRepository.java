@@ -6,9 +6,11 @@ import org.vornex.user.entity.Role;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, UUID> {
     List<Role> findByNameIn(Collection<String> names);
+    Optional<Role> findByName(String roleName);
 }

@@ -9,6 +9,7 @@ import org.vornex.user.dto.response.PublicUserDto;
 import org.vornex.user.dto.response.UserProfileDto;
 import org.vornex.user.entity.Role;
 import org.vornex.user.entity.User;
+import org.vornex.userapi.UserAccountDto;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,10 +26,11 @@ public interface UserMapper {
     // публичный профиль для других пользователей
     PublicUserDto toPublicUserDto(User user);
 
-//    //обратный маппинг при необходимости
-//    User fromDto (UserDto userDto); из role string в Role проблема.
-
     void updateFromDto(UpdateProfileDto updateProfileDto, @MappingTarget User user);
+
+    User userFromDto (UserAccountDto createDto);
+
+    UserAccountDto toUserAccountDto(User user);
 
 
     // кастомный маппинг: roles -> role names

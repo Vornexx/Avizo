@@ -18,10 +18,10 @@ public class UserSpecifications {
 
     public static Specification<User> hasRole(String roleName) {
         return (root, query, cb) -> {
-            if (query != null) {
+            if (Long.class != query.getResultType()) {
                 query.distinct(true);
             }
-            Join<User, Role> roles = root.join("roles", JoinType.LEFT);
+            Join<User, Role> roles = root.join("roles", JoinType.INNER);
             return cb.equal(roles.get("name"), roleName);
         };
     }
