@@ -137,14 +137,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (user == null || user.getStatus() != AccountStatus.ACTIVE) {
             throw new BadCredentialsException("User is null or not ACTIVE");
         }
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-        System.out.println("ПРОШЕЛ ФИЛЬТР");
-
 
         // Собираем authorities: ROLE_*, а также permissions
         var authorities = toAuthorities(user);
