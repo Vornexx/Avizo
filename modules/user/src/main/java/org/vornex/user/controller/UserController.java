@@ -30,7 +30,7 @@ public class UserController {
 
     //id пользователя будет в карточке объявления (listing)
     @GetMapping("/{id}")
-    public ResponseEntity<PublicUserDto> getPublicUserById(@PathVariable UUID id) {
+    public ResponseEntity<PublicUserDto> getPublicUserById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(userService.getPublicUserById(id));
     }
 

@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 
-// валидация только access, если его нет (кука удаленно или просрочен токен) spring security выкидывает 401 и фронтенд делает запрос на refresh
+// валидация только access, если его нет (кука удаленна или просрочен токен) spring security выкидывает 401 и фронтенд делает запрос на refresh
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
@@ -46,14 +46,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final String accessCookieName;
     private final boolean allowAuthorizationHeaderFallback;
-    private final RequestMatcher publicEndpointsMatcher; // может быть null
     private final RestAuthenticationEntryPoint entryPoint;
 
     public JwtAuthenticationFilter(AccessTokenService accessTokenService,
                                    AuthDetailsService authDetailsService,
                                    String accessCookieName,
-                                   boolean allowAuthorizationHeaderFallback,
-                                   RequestMatcher publicEndpointsMatcher, RestAuthenticationEntryPoint entryPoint) {
+                                   boolean allowAuthorizationHeaderFallback
+                                   , RestAuthenticationEntryPoint entryPoint) {
         this.accessTokenService = requireNonNull(accessTokenService);
         this.authDetailsService = requireNonNull(authDetailsService);
         this.entryPoint = entryPoint;
@@ -62,14 +61,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         this.accessCookieName = accessCookieName;
         this.allowAuthorizationHeaderFallback = allowAuthorizationHeaderFallback;
-        this.publicEndpointsMatcher = publicEndpointsMatcher; // может быть null
     }
 
-    @Override
-    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
-        // Не фильтруем публичные эндпоинты, если задан matcher (например: /auth/login, /auth/refresh, /public/**)
-        return publicEndpointsMatcher != null && publicEndpointsMatcher.matches(request); // true - не будет применяться, false вызовется doFilterInternal
-    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -109,7 +102,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = extractFromAuthorizationHeader(request);
         }
         if (token == null) {
-            throw new BadCredentialsException("Access token is missing");
+            return;
         }
 
         // Валидируем и парсим ровно ОДИН раз (не делаем double-parse)
@@ -145,6 +138,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (user == null || user.getStatus() != AccountStatus.ACTIVE) {
             throw new BadCredentialsException("User is null or not ACTIVE");
         }
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+        System.out.println("ПРОШЕЛ ФИЛЬТР");
+
+
 
         // Собираем authorities: ROLE_*, а также permissions
         var authorities = toAuthorities(user);

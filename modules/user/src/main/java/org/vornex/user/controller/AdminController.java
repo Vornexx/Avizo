@@ -28,8 +28,8 @@ public class AdminController {
 
     @GetMapping()
     public ResponseEntity<PagedResponse<UserDto>> getAllUsers(
-            @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "20") int size,
             @Valid UserFilterDto filterDto
     ) {
         PagedResponse<UserDto> users = adminService.getAllUsers(page, size, filterDto);
@@ -37,22 +37,22 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable("id") UUID id) {
         UserDto userDto = adminService.getUserById(id);
         return ResponseEntity.ok(userDto);
     }
 
-    @PutMapping("/{id}/roles")
-    public ResponseEntity<Void> updateUserRoles(@PathVariable UUID id,
+    @PatchMapping("/{id}/roles")
+    public ResponseEntity<Void> updateUserRoles(@PathVariable("id") UUID id,
                                                 @RequestBody @Valid RoleUpdateDto dto) {
         adminService.updateUserRoles(id, dto.getRoles());
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("{id}/status")
-    public ResponseEntity<Void> changeUserStatus(@PathVariable UUID id,
+    @PatchMapping("{id}/status")
+    public ResponseEntity<Void> changeUserStatus(@PathVariable("id") UUID id,
                                                  @RequestBody @Valid ChangeAccountStatusDto dto){
-        adminService.changeAccountStatus(id, dto.getNewStatus());
+        adminService.changeAccountStatus(id, dto.getNewStatusStr());
         return ResponseEntity.ok().build();
     }
 

@@ -11,43 +11,31 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.vornex.auth.filter.JwtAuthenticationFilter;
 import org.vornex.auth.service.AccessTokenService;
 import org.vornex.authapi.AuthDetailsService;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
     private final RestAuthenticationEntryPoint entryPoint;
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(
             AccessTokenService accessTokenService,
             AuthDetailsService authDetailsService,
             @Value("${security.auth.access-cookie-name:ACCESS_TOKEN}") String cookieName
     ) {
-        // Лямбда для публичных эндпоинтов
-        RequestMatcher publicEndpointsMatcher = request -> {
-            String path = request.getServletPath();
-            return path.equals("/auth/login") ||
-                    path.equals("/auth/refresh") ||
-                    path.startsWith("/auth/register") ||
-                    path.startsWith("/public/") ||
-                    path.equals("/") ||                  // главная
-                    path.equals("/index.html") ||        // index.html
-                    path.startsWith("/css/") ||         // стили
-                    path.startsWith("/js/") ||          // скрипты
-                    path.startsWith("/images/");        // картинки
-
-        };
-
         return new JwtAuthenticationFilter(
                 accessTokenService,
                 authDetailsService,
-                cookieName,         // имя куки
-                true,                   // fallback через Authorization header
-                publicEndpointsMatcher,  // передаем наш matcher
+                cookieName,
+                true,
                 entryPoint
         );
     }
@@ -63,7 +51,7 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/", "/index.html",
                                 "/css/**", "/js/**", "/images/**",
-                                "/auth/login", "/auth/register", "/auth/refresh", "/public/**"
+                                "/auth/login", "/auth/register", "/auth/refresh", "/public/**", "/actuator/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

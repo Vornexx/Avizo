@@ -12,5 +12,5 @@ import org.vornex.userapi.AccountStatus;
 public class ChangeAccountStatusDto {
 
     @NotNull(message = "Новый статус не может быть пустым")
-    private AccountStatus newStatus;
+    private String newStatusStr;
 }

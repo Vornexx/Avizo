@@ -20,7 +20,7 @@ public interface AdminService {
 
     void updateUserRoles(UUID id, Set<String> roles);
 
-    void changeAccountStatus(UUID id, AccountStatus newStatus);
+    void changeAccountStatus(UUID id, String newStatusStr);
 
 
 }

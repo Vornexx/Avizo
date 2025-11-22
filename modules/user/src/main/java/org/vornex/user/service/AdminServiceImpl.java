@@ -90,27 +90,37 @@ public class AdminServiceImpl implements AdminService {
                     "Роли не найдены:" + String.join(", ", missing)); // join чтобы не отображалось с квадратными скобками.
         }
         user.setRoles(new HashSet<>(roles));
+        userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public void changeAccountStatus(UUID id, AccountStatus newStatus) {
+    public void changeAccountStatus(UUID id, String newStatusStr) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         AccountStatus currentStatus = user.getStatus();
-        if (currentStatus == newStatus) { //enum всегда через == сравниваем.
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Статус уже установлен: " + newStatus);
+
+        AccountStatus newStatus;
+        try {
+            newStatus = AccountStatus.valueOf(newStatusStr.toUpperCase()); // конвертируем в enum
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Статус не существует: " + newStatusStr);
+        }
+
+        if (currentStatus == newStatus) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Статус уже установлен: " + newStatus);
         }
 
         if (!currentStatus.canTransitionTo(newStatus)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "переход из " + currentStatus + " в " + newStatus + " не разрешен");
-
+                    "Переход из " + currentStatus + " в " + newStatus + " не разрешён");
         }
-        user.setStatus(newStatus);
 
-//        log.info("Админ сменил статус пользователя {}: {} → {}", user.getId(), currentStatus, newStatus);
+        user.setStatus(newStatus);
+        userRepository.save(user);
     }
 
     public Specification<User> buildSpecification(UserFilterDto filter) {
