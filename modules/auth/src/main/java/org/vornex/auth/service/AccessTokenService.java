@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-// AccessTokenService.java
 public interface AccessTokenService {
     String generateAccessToken(String subject, Map<String, Object> claims);
 

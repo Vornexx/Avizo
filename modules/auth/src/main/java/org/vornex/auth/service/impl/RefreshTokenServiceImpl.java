@@ -1,7 +1,5 @@
 package org.vornex.auth.service.impl;
 
-// RefreshTokenServiceImpl.java
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
@@ -117,6 +115,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         repo.findByJti(jti).ifPresent(e -> {
             if (!e.isRevoked()) {
                 e.setRevoked(true);
+                e.setRevokedAt(Instant.now());
                 repo.save(e);
             }
         });

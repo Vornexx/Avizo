@@ -1,6 +1,5 @@
 package org.vornex.auth.service.impl;
 
-// AccessTokenServiceImpl.java
 
 import io.jsonwebtoken.Claims;
 import org.vornex.auth.service.AccessTokenService;

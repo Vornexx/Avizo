@@ -44,12 +44,11 @@ public class MDCFilter extends OncePerRequestFilter {
             MDC.put("requestId", requestId);
             MDC.put("username", username);
 
-            // Также можно добавить в response заголовок для отладки (по желанию) и далее прокидывать его в другие микросервисы или через фронтенд от клиента чтобы цепочка requestId сохранялась.
             response.setHeader("X-Request-ID", requestId);
 
             filterChain.doFilter(request, response);
         } finally {
-            // Обязательно чистим MDC чтобы не было утечек данных между потоками
+            // Чистим MDC чтобы не было утечек данных между потоками
             MDC.remove("requestId");
             MDC.remove("username");
         }

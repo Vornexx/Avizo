@@ -2,7 +2,6 @@ package org.vornex.listing.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.vornex.listing.dto.attachmentDto.AttachmentCompletedResponseDto;
 import org.vornex.listing.dto.attachmentDto.AttachmentRequestDto;
@@ -10,7 +9,7 @@ import org.vornex.listing.dto.attachmentDto.AttachmentResponseDto;
 import org.vornex.listing.entity.Attachment;
 import org.vornex.listing.service.AttachmentService;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/uploads")
 public class AttachmentController {

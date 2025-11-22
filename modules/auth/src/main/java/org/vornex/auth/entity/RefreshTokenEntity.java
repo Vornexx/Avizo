@@ -1,11 +1,9 @@
 package org.vornex.auth.entity;
 
-// RefreshTokenEntity.java
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -17,7 +15,8 @@ import java.util.UUID;
         })
 @Getter
 public class RefreshTokenEntity {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private UUID id;
 
     @Column(nullable = false)
@@ -37,10 +36,10 @@ public class RefreshTokenEntity {
     @Column(nullable = false)
     private Instant expiresAt;
 
+    @Setter
     @Column(nullable = true)
     private Instant revokedAt;
 
-    // getters/setters...
     @Setter
     @Column(nullable = false)
     private boolean revoked = false;
@@ -48,7 +47,8 @@ public class RefreshTokenEntity {
     @Version
     private long version;
 
-    protected RefreshTokenEntity() {}
+    protected RefreshTokenEntity() {
+    }
 
     public RefreshTokenEntity(String userId, String tokenHash, String jti, Instant iat, Instant exp) {
         this.userId = userId;
