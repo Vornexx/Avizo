@@ -20,7 +20,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.vornex.auth.config.RestAuthenticationEntryPoint;
@@ -52,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                    AuthDetailsService authDetailsService,
                                    String accessCookieName,
                                    boolean allowAuthorizationHeaderFallback
-                                   , RestAuthenticationEntryPoint entryPoint) {
+            , RestAuthenticationEntryPoint entryPoint) {
         this.accessTokenService = requireNonNull(accessTokenService);
         this.authDetailsService = requireNonNull(authDetailsService);
         this.entryPoint = entryPoint;
@@ -145,7 +144,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("ПРОШЕЛ ФИЛЬТР");
         System.out.println("ПРОШЕЛ ФИЛЬТР");
         System.out.println("ПРОШЕЛ ФИЛЬТР");
-
 
 
         // Собираем authorities: ROLE_*, а также permissions

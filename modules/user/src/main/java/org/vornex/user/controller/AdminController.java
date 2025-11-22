@@ -1,9 +1,6 @@
 package org.vornex.user.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,7 +48,7 @@ public class AdminController {
 
     @PatchMapping("{id}/status")
     public ResponseEntity<Void> changeUserStatus(@PathVariable("id") UUID id,
-                                                 @RequestBody @Valid ChangeAccountStatusDto dto){
+                                                 @RequestBody @Valid ChangeAccountStatusDto dto) {
         adminService.changeAccountStatus(id, dto.getNewStatusStr());
         return ResponseEntity.ok().build();
     }
